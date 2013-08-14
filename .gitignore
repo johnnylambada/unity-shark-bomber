@@ -1,0 +1,46 @@
+# Some resources
+# http://kleber-swf.blogspot.com/2013/05/the-definitive-gitignore-for-unity3d.html
+
+# Setup Unity project for git:
+# Edit > Project Settings > Editor > Version Control:
+#   * Choose Meta Files. 
+#   * If you have Unity3D Pro, change the Asset Serialization mode to Force Text too.
+
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+UnityGenerated/
+Library/
+ 
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+ 
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# ============ #
+# iOS project  #
+# ============ #
+/shark-bomber-ios
