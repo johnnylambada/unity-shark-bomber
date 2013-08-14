@@ -152,13 +152,12 @@ sb-build-android ()
     (
     sb-build-vars
 
-#    $UNITY \
-#        -projectPath $(gettop)/shark-bomber    \
-#        -executeMethod Build.Andorid    \
-#        -batchmode \
-#        -quit
+    $UNITY \
+        -projectPath $(gettop)/shark-bomber    \
+        -executeMethod Build.Android    \
+        -batchmode \
+        -quit
     )
-    echo "don't know how yet"
 }
 echo 'sb-build-android@Build shark-bomber for Android' >> $T/.hmm
 

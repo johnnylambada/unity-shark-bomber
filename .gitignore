@@ -49,4 +49,5 @@ Thumbs.db
 # other stuff #
 # =========== #
 .hmm
-.*swp
+*.swp
+*.apk
