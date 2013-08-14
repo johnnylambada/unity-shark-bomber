@@ -67,18 +67,85 @@ echo 'sb-reset@CAUTION: Destructively resets to clean repo' >> $T/.hmm
 sb-build-vars ()
 {
     UNITY=/Applications/Unity/Unity.app/Contents/MacOS/Unity
-#    XCODEBUILD=/usr/bin/xcodebuild
-#    XCRUN=/usr/bin/xcrun
-#    SECURITY=/usr/bin/security
-#    PROVISIONING_GUID=SOME-GUID-GOES-HERE
-#    CODESIGN_IDENTITY="iPhone Distribution: Joe Developer"
-#    BUILD_DIR=../UnityClient/build
-#    DEV_DIR="../UnityClient/"
-#    KEYCHAIN_PASSWORD="Woohoo"
-#    APP_NAME=shark-bomber
-#    DEPLOY_DIR_IOS=$(gettop)/builds/ios
-#    DEPLOY_DIR_ANDROID=$(gettop)/builds/android
+    XCODEBUILD=/usr/bin/xcodebuild
+    XCRUN=/usr/bin/xcrun
+    APP=sharkbomber
+    APPDIR=$(gettop)/shark-bomber-ios/build
+    IPADIR=$(gettop)/shark-bomber-ios/ipa
+    space=" "
+    PROVPRO_PATH="$HOME/Library/MobileDevice/Provisioning${SPACE} Profiles/${IOS_PROVISIONING_PROFILE_GUID}.mobileprovision"
 }
+
+sb-build-ios ()
+{
+    if [ -z "$IOS_SIGNING_IDENTITY" ]; then
+        cat >&2 <<EOF
+ERROR: IOS_SIGNING_IDENTITY not set.
+It should be something like this:
+export IOS_SIGNING_IDENTITY="iPhone Developer: Fred Flintstone (ABCDEF1GH2)"
+or
+export IOS_SIGNING_IDENTITY="iPhone Distribution: Slate Industries (ZYZZAA9FU3)"
+EOF
+        return 1
+    fi
+    if [ -z "$IOS_PROVISIONING_PROFILE_GUID" ]; then
+        cat >&2 <<EOF
+ERROR: IOS_PROVISIONING_PROFILE_GUID not set.
+It should be something like this:
+export IOS_PROVISIONING_PROFILE_GUID="DEADBEEF-FAIC-F00D-FEED-FACEB005D00F"
+To find it:
+1) Bring up xcode
+2) Organizer
+3) Provisioning Profiles
+4) Find the one you want -- maybe somethig like "IOS Team Provisioning Profile: *"?
+5) Right click -> Reveal in finder
+6) The one you want is selected. Click on it to change its name. Command-C to copy, but don't change its name!
+7) 
+export IOS_PROVISIONING_PROFILE_GUID="<what you copied to clipboard goes here>"
+EOF
+        return 1
+    fi
+    (
+    sb-build-vars
+
+    echo "Step 1/3: unity build" &&
+    $UNITY \
+        -projectPath $(gettop)/shark-bomber \
+        -executeMethod Build.iOS \
+        -batchmode \
+        -quit &&
+
+    echo "Step 2/3: build .app" &&
+    cd $(gettop)/shark-bomber-ios &&
+    $XCODEBUILD \
+        -target Unity-iPhone \
+        -configuration Release \
+        -sdk iphoneos \
+        clean build &&
+
+    # http://stackoverflow.com/a/5678246/9648
+    echo "Step 3/3: build .ipa" &&
+    rm -rf $IPADIR &&
+    mkdir -p $IPADIR &&
+    $XCRUN \
+        -sdk iphoneos \
+        PackageApplication \
+            -v "${APPDIR}/${APP}.app" \
+            -o "${IPADIR}/${APP}.ipa" \
+            --sign "${IOS_SIGNING_IDENTITY}" \
+            --embed "${PROVPRO_PATH}" &&
+
+    echo "Complete!"
+    )
+}
+echo 'sb-build-ios@Build shark-bomber for iOS' >> $T/.hmm
+
+sb-ios-from-scratch ()
+{
+	sb-reset
+	sb-build-ios
+}
+echo 'sb-io-from-scratch@CAUTION: Destructively build shark-bomber for iOS from scratch' >> $T/.hmm
 
 sb-build-android ()
 {
@@ -94,28 +161,5 @@ sb-build-android ()
     echo "don't know how yet"
 }
 echo 'sb-build-android@Build shark-bomber for Android' >> $T/.hmm
-
-sb-build-ios ()
-{
-    sb-build-vars
-
-    $UNITY \
-        -projectPath $(gettop)/shark-bomber \
-        -executeMethod Build.iOS \
-        -batchmode \
-        -quit
-
-    # Restore Info.plist that gets blown up during Unity build
-#    git checkout -- ZyaStudio_Xcode/ZyaStudioiOS/Info.plist
-
-}
-echo 'sb-build-ios@Build shark-bomber for iOS' >> $T/.hmm
-
-sb-ios-from-scratch ()
-{
-	sb-reset
-	sb-build-ios
-}
-echo 'sb-io-from-scratch@CAUTION: Destructively build shark-bomber for iOS from scratch' >> $T/.hmm
 
 unset T f
