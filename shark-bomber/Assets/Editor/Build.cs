@@ -19,7 +19,7 @@ public class Build : MonoBehaviour {
         if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iPhone) {
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.iPhone);
         }
-        BuildOptions customBuildOptions = BuildOptions.AcceptExternalModificationsToPlayer;
+        BuildOptions customBuildOptions = BuildOptions.None;
         EditorUserBuildSettings.SetBuildLocation (BuildTarget.iPhone, buildOutputPath);
         BuildPipeline.BuildPlayer (getScenes(), buildOutputPath, BuildTarget.iPhone, customBuildOptions);
         
