@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Shark : MonoBehaviour {
+public class FishClass: MonoBehaviour {
 	public float speed = 6f;
 
 	// Use this for initialization
