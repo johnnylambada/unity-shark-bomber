@@ -3,6 +3,7 @@ using System.Collections;
  
 public class BombClass : MonoBehaviour {
 	private float ySpeed = -4f;
+	public GameObject explosionPrefab;
  
 	// Update is called once per frame
 	void Update () {
@@ -18,6 +19,7 @@ public class BombClass : MonoBehaviour {
 			obj.gameObject.transform.rotation = Quaternion.identity;
 			obj.gameObject.transform.position = new Vector3(20f, -3f, 8f);
 			Destroy(this.gameObject);
+			Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 		}
 	}
 }
